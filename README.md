@@ -5,7 +5,7 @@ Installation:
 
 ```console
 $ composer require --dev klimick/psalm-show-type
-$ vendor/bin/psalm-plugin enable Klimick\PsalmShowType\ShowTypePlugin
+$ vendor/bin/psalm-plugin enable Klimick\\PsalmShowType\\ShowTypePlugin
 ```
 
 
