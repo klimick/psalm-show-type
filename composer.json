@@ -1,0 +1,21 @@
+{
+    "name": "klimick/psalm-show-type",
+    "description": "Analog for psalm-trace but with pretty print",
+    "type": "psalm-plugin",
+    "autoload": {
+        "psr-4": {
+            "Klimick\\PsalmShowType\\": ["./src"]
+        }
+    },
+    "require": {
+        "php": "^8.0",
+        "vimeo/psalm": "^4.7"
+    },
+    "license": "MIT License",
+    "authors": [
+        {
+            "name": "Klimenko Andrew (klimick)",
+            "email": "klimichkartorgnusov@gmail.com"
+        }
+    ]
+}
