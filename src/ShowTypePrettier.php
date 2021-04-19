@@ -9,7 +9,6 @@ use Psalm\Type\Union;
 use Psalm\Type\Atomic;
 use Psalm\Codebase;
 use Psalm\Storage\ClassLikeStorage;
-use ReflectionClass;
 
 final class ShowTypePrettier
 {
@@ -108,6 +107,15 @@ final class ShowTypePrettier
         ));
     }
 
+    private static function shortClassName(string $class): string
+    {
+        if (1 === preg_match('~(\\\\)?(?<short_class_name>\w+)$~', $class, $m)) {
+            return $m['short_class_name'];
+        }
+
+        return $class;
+    }
+
     private static function namedObject(Atomic\TNamedObject $atomic, Codebase $codebase, int $level): string
     {
         /** @psalm-suppress InternalMethod */
@@ -117,11 +125,16 @@ final class ShowTypePrettier
             ? self::getGenerics($codebase, $classStorage, $atomic, $level)
             : null;
 
-        /** @var class-string $fullName */
-        $fullName = $classStorage->name;
-        $shortName = (new ReflectionClass($fullName))->getShortName();
+        $shortClassName = self::shortClassName($classStorage->name);
+        $mainSide = null !== $generics ? "{$shortClassName}<{$generics}>" : $shortClassName;
 
-        return null === $generics ? $shortName : "{$shortName}<{$generics}>";
+        $intersectionTypes = $atomic->getIntersectionTypes();
+
+        $intersectionSide = null !== $intersectionTypes
+            ? implode(', ', array_map(fn(Atomic $a) => self::atomic($a, $codebase, $level), $intersectionTypes))
+            : null;
+
+        return null !== $intersectionSide ? "{$mainSide} & {$intersectionSide}" : $mainSide;
     }
 
     private static function keyedArray(Atomic\TKeyedArray $atomic, Codebase $codebase, int $level): string
