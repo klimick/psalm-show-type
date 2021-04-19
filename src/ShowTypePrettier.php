@@ -30,6 +30,7 @@ final class ShowTypePrettier
         return match (true) {
             $atomic instanceof Atomic\TList => self::list($atomic, $codebase, $level),
             $atomic instanceof Atomic\TArray => self::array($atomic, $codebase, $level),
+            $atomic instanceof Atomic\TIterable => self::iterable($atomic, $codebase, $level),
             $atomic instanceof Atomic\TClosure => self::callable($atomic, $codebase, $level),
             $atomic instanceof Atomic\TCallable => self::callable($atomic, $codebase, $level),
             $atomic instanceof Atomic\TClassString => self::classString($atomic, $codebase, $level),
@@ -38,6 +39,14 @@ final class ShowTypePrettier
             $atomic instanceof Atomic\TTemplateParam => self::templateParam($atomic, $codebase, $level),
             default => $atomic->getId(),
         };
+    }
+
+    private static function iterable(Atomic\TIterable $atomic, Codebase $codebase, int $level): string
+    {
+        $key = self::union($atomic->type_params[0], $codebase, $level);
+        $val = self::union($atomic->type_params[1], $codebase, $level);
+
+        return "iterable<TKey: {$key}, TValue: $val>";
     }
 
     private static function classString(Atomic\TClassString $atomic, Codebase $codebase, int $level): string
@@ -57,14 +66,12 @@ final class ShowTypePrettier
 
     private static function array(Atomic\TArray $atomic, Codebase $codebase, int $level): string
     {
-        $types = implode(', ', array_map(
-            fn(Union $param) => self::union($param, $codebase, $level),
-            $atomic->type_params
-        ));
+        $key = self::union($atomic->type_params[0], $codebase, $level);
+        $val = self::union($atomic->type_params[1], $codebase, $level);
 
         return $atomic instanceof Atomic\TNonEmptyArray
-            ? "non-empty-array<{$types}>"
-            : "array<{$types}>";
+            ? "non-empty-array<TKey: {$key}, TValue: {$val}>"
+            : "array<TKey: {$key}, TValue: $val>";
     }
 
     private static function list(Atomic\TList $atomic, Codebase $codebase, int $level): string
@@ -72,8 +79,8 @@ final class ShowTypePrettier
         $type = self::union($atomic->type_param, $codebase, $level);
 
         return $atomic instanceof Atomic\TNonEmptyList
-            ? "non-empty-list<{$type}>"
-            : "list<{$type}>";
+            ? "non-empty-list<TValue: {$type}>"
+            : "list<TValue: {$type}>";
     }
 
     private static function callable(Atomic\TClosure|Atomic\TCallable $atomic, Codebase $codebase, int $level): string
