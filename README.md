@@ -50,7 +50,7 @@ $arrowFn = fn() => /** @show-type */ str_contains('psalm-show-type', 'show-type'
 @show-type: SplDoublyLinkedList<TKey: int, TValue: Str>
 ```
 
-#### array\iterable
+#### array/iterable
 
 ```
 @psalm-trace: array<int, Foo\Bar\Str>
