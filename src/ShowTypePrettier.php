@@ -35,6 +35,7 @@ final class ShowTypePrettier
             $atomic instanceof Atomic\TClassString => self::classString($atomic, $codebase, $level),
             $atomic instanceof Atomic\TNamedObject => self::namedObject($atomic, $codebase, $level),
             $atomic instanceof Atomic\TKeyedArray => self::keyedArray($atomic, $codebase, $level),
+            $atomic instanceof Atomic\TTemplateParam => self::templateParam($atomic, $codebase, $level),
             default => $atomic->getId(),
         };
     }
@@ -44,6 +45,14 @@ final class ShowTypePrettier
         return null !== $atomic->as_type
             ? 'class-string<' . self::namedObject($atomic->as_type, $codebase, $level) . '>'
             : 'class-string';
+    }
+
+    private static function templateParam(Atomic\TTemplateParam $atomic, Codebase $codebase, int $level): string
+    {
+        $shortClassName = self::shortClassName($atomic->defining_class);
+        $as = self::union($atomic->as, $codebase, $level);
+
+        return "from {$shortClassName} as {$as}";
     }
 
     private static function array(Atomic\TArray $atomic, Codebase $codebase, int $level): string
