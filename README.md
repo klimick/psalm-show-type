@@ -83,10 +83,10 @@ $arrowFn = fn() => /** @show-type */ str_contains('psalm-show-type', 'show-type'
 #### callable/closure
 
 ```
-@psalm-trace: callble(Foo\Bar\Num): array{prop1: Foo\Bar\Str, prop2: SplDoublyLinkedList<int, Foo\Bar\Str>}
+@psalm-trace: callable(Foo\Bar\Num): array{prop1: Foo\Bar\Str, prop2: SplDoublyLinkedList<int, Foo\Bar\Str>}
 ```
 ```
-@show-type: callble(Num): array{
+@show-type: callable(Num): array{
     prop1: Str,
     prop2: SplDoublyLinkedList<TKey: int, TValue: Str>,
 }
