@@ -34,6 +34,7 @@ final class ShowTypePrettier
             $atomic instanceof Atomic\TClosure => self::callable($atomic, $codebase, $level),
             $atomic instanceof Atomic\TCallable => self::callable($atomic, $codebase, $level),
             $atomic instanceof Atomic\TClassString => self::classString($atomic, $codebase, $level),
+            $atomic instanceof Atomic\TLiteralClassString => self::literalClassString($atomic),
             $atomic instanceof Atomic\TNamedObject => self::namedObject($atomic, $codebase, $level),
             $atomic instanceof Atomic\TKeyedArray => self::keyedArray($atomic, $codebase, $level),
             $atomic instanceof Atomic\TTemplateParam => self::templateParam($atomic, $codebase, $level),
@@ -52,8 +53,13 @@ final class ShowTypePrettier
     private static function classString(Atomic\TClassString $atomic, Codebase $codebase, int $level): string
     {
         return null !== $atomic->as_type
-            ? 'class-string<' . self::namedObject($atomic->as_type, $codebase, $level) . '>'
+            ? self::namedObject($atomic->as_type, $codebase, $level) . '::class'
             : 'class-string';
+    }
+
+    private static function literalClassString(Atomic\TLiteralClassString $atomic): string
+    {
+        return self::shortClassName($atomic->value) . '::class';
     }
 
     private static function templateParam(Atomic\TTemplateParam $atomic, Codebase $codebase, int $level): string
