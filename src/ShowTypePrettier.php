@@ -166,7 +166,11 @@ final class ShowTypePrettier
                 $atomic->properties,
             )
             : array_map(
-                fn(int|string $property, Union $type) => $tab($level) . $property . ': ' . self::union($type, $codebase, $level + 1),
+                fn(int|string $property, Union $type) => implode('', [
+                    $tab($level),
+                    $type->possibly_undefined ? "{$property}?: " : "{$property}: ",
+                    self::union($type, $codebase, $level + 1),
+                ]),
                 array_keys($atomic->properties),
                 array_values($atomic->properties),
             );
