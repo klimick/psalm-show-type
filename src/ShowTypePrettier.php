@@ -165,8 +165,9 @@ final class ShowTypePrettier
 
         $openBracket = 'array{';
         $closeBracket = $level === 1 ? '}' : $tab($level - 1) . '}';
+        $isList = self::isKeyedArrayList($atomic);
 
-        $shape = $atomic->is_list
+        $shape = $isList
             ? array_map(
                 fn(Union $type) => self::union($type, $codebase, $level + 1),
                 $atomic->properties,
@@ -181,8 +182,13 @@ final class ShowTypePrettier
                 array_values($atomic->properties),
             );
 
-        return $atomic->is_list
+        return $isList
             ? $openBracket . implode(", ", array_values($shape)) . $closeBracket
             : $openBracket . "\n" . implode(",\n", array_values($shape)) . ",\n" . $closeBracket;
+    }
+
+    private static function isKeyedArrayList(Atomic\TKeyedArray $atomic): bool
+    {
+        return array_keys($atomic->properties) === range(0, count($atomic->properties) - 1);
     }
 }
